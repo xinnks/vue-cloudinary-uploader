@@ -1,0 +1,42 @@
+{
+  "private": false,
+  "name": "vue-cloudinary-uploader",
+  "version": "0.1.0",
+  "description": "A cloudinary image cropper and uploader Vue component",
+  "main": "./dist/index.js",
+  "author": "James Sinkala",
+  "dependencies": {},
+  "devDependencies": {
+    "@vue/compiler-sfc": "^3.0.5",
+    "axios": "^0.21.1",
+    "bili": "^5.0.5",
+    "cropperjs": "^1.5.9",
+    "rollup-plugin-vue": "^6.0.0",
+    "vue": "^2.6.12",
+    "vue-loader": "^15.9.6",
+    "vue-template-compiler": "^2.6.12"
+  },
+  "scripts": {
+    "dev": "vue serve src/VueCloudinaryUploader.vue",
+    "build": "npx bili --format cjs --format umd --module-name VueCloudinaryUploader --bundle-node-modules --minify --no-map",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "files": [
+    "dist/*"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/codeprints/vue-cloudinary-uploader.git"
+  },
+  "keywords": [
+    "vue",
+    "cludinary",
+    "uploader",
+    "image"
+  ],
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/codeprints/vue-cloudinary-uploader/issues"
+  },
+  "homepage": "https://github.com/codeprints/vue-cloudinary-uploader#readme"
+}
