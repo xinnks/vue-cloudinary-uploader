@@ -34,7 +34,6 @@
 </template>
 
 <script>
-  /*eslint-disable*/
   import axios from 'axios'
   import Cropper from 'cropperjs'
   import 'cropperjs/dist/cropper.css'
