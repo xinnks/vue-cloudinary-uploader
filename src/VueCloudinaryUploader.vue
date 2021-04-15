@@ -34,9 +34,9 @@
 </template>
 
 <script>
-  import axios from 'axios'
-  import Cropper from 'cropperjs'
-  import 'cropperjs/dist/cropper.css'
+  import axios from "axios";
+  import Cropper from "cropperjs";
+  import "cropperjs/dist/cropper.css";
   export default {
     name: "CloudinaryVueUploader",
     data(){
@@ -49,26 +49,26 @@
         cropperInstance: null,
         uploadProgress: 0,
         processingUpload: false, // this will be true when image is being uploaded to prevent any other upload request
-        localFileDataUrl: '',
-        cloudinaryUploadUrl: '',
-        cloudinaryDeleteUrl: '',
+        localFileDataUrl: "",
+        cloudinaryUploadUrl: "",
+        cloudinaryDeleteUrl: "",
         uploadedImageData: {
-          deleteToken: '',
-          publicId: '',
-          secureUrl: ''
+          deleteToken: "",
+          publicId: "",
+          secureUrl: ""
         }
       }
     },
     props: {
       CloudinaryCloudName: {
         type: String,
-        default: 'djx5h4cjt',
-        validator: (x) => x !== ''
+        default: "djx5h4cjt",
+        validator: (x) => x !== ""
       },
       cloudinaryUploadPreset: {
         type: String,
-        default: 'misc-images',
-        validator: (x) => x !== ''
+        default: "misc-images",
+        validator: (x) => x !== ""
       },
       aspectRatio: {
         type: Number,
@@ -76,7 +76,7 @@
       },
       inputName: {
         type: String,
-        default: 'imageToUpload'
+        default: "imageToUpload"
       },
     },
     mounted(){
@@ -103,64 +103,65 @@
             background: false,
             crop(event) {},
             ready(){
-            this.showImageCropper = true
-          }
+              this.showImageCropper = true;
+            }
           });
         })
       },
       async addLocalImage(){
         if(this.$refs.photo.files.length < 1){
-          console.log('No photo selected')
-          return false
+          console.log("No photo selected");
+          return false;
         }
         let photo = this.$refs.photo.files[0];
-        this.localFileDataUrl = window.URL.createObjectURL(photo)
-        this.$nextTick(this.editImage())
+        this.localFileDataUrl = window.URL.createObjectURL(photo);
+        this.$nextTick(this.editImage());
       },
       async getImageUrl(){
         if(!this.cropperInstance){
-          alert("Select Image File!")
-          return false
+          alert("Select Image File!");
+          return false;
         }
         if(!this.cropperInstance.getCroppedCanvas()){
-          alert("No Image Detected!")
-          return false
+          alert("No Image Detected!");
+          return false;
         }
         if(this.processingUpload){ // don't initiate another upload while one is running
-          alert("Previous upload not completed!")
-          return false
+          alert("Previous upload not completed!");
+          return false;
         }
-        let canvas = this.cropperInstance.getCroppedCanvas()
-        await canvas.toBlob( (blob) => {let formData = new FormData()
-          formData.append('file', blob)
-          formData.append('upload_preset', this.cloudinaryUploadPreset)
-          this.uploadImageToCloud(formData)
+        let canvas = this.cropperInstance.getCroppedCanvas();
+        await canvas.toBlob( (blob) => {
+          let formData = new FormData();
+          formData.append("file", blob);
+          formData.append("upload_preset", this.cloudinaryUploadPreset);
+          this.uploadImageToCloud(formData);
         })
       },
       destroyUploaderInstance(closeCropper = false){
         // destroy cropper instance
         if(this.cropperInstance && closeCropper){
-          this.cropperInstance.destroy()
+          this.cropperInstance.destroy();
         }
         // set all other variables to their defaults
-        this.cropperInstance = null
-        this.localFileDataUrl = ''
-        this.processingUpload = false
-        this.showFileSelector = true
-        this.showImageCropper = false
-        this.showUploadProgress = false
-        this.uploadProgress = 0
+        this.cropperInstance = null;
+        this.localFileDataUrl = "";
+        this.processingUpload = false;
+        this.showFileSelector = true;
+        this.showImageCropper = false;
+        this.showUploadProgress = false;
+        this.uploadProgress = 0;
         document.getElementById("vcu-file-input").value = "";
-        this.uploadedImageData = { deleteToken: '', publicId: '', secureUrl: '' }
-        this.$emit('uploaderDestroyed', "" )
+        this.uploadedImageData = { deleteToken: "", publicId: "", secureUrl: "" };
+        this.$emit("uploaderDestroyed", "" );
         if(closeCropper){
-          this.hideModal()
+          this.hideModal();
         }
       },
       uploadImageToCloud(formData){
-        this.showUploadProgress = true
-        this.processingUpload = true
-        this.uploadProgress = 0
+        this.showUploadProgress = true;
+        this.processingUpload = true;
+        this.uploadProgress = 0;
         axios.post(this.cloudinaryUploadUrl, formData, {
           onUploadProgress: (progressEvent) => {
             this.uploadProgress = progressEvent.lengthComputable ? Math.round( (progressEvent.loaded * 100) / progressEvent.total ) : 0 ;
@@ -171,41 +172,41 @@
             secureUrl: response.data.secure_url,
             deleteToken: response.data.delete_token,
             publicId: response.data.public_id
-          }
-          this.showUploadProgress = false
-          this.processingUpload = false
-          this.$emit('imageUrl', response.data.secure_url )
-          this.hideModal()
+          };
+          this.showUploadProgress = false;
+          this.processingUpload = false;
+          this.$emit("imageUrl", response.data.secure_url );
+          this.hideModal();
         })
         .catch( (error) => {
           if(error.response){
-              console.log(error.message)
+              console.log(error.message);
           }else{
-              console.log(error)
+              console.log(error);
           }
-          this.showUploadProgress = false
-          this.processingUpload = false
+          this.showUploadProgress = false;
+          this.processingUpload = false;
         })
       },
       deleteImageFromCloud(){
-        if(this.uploadedImageData.deleteToken === ''){ // if delete token is not provided
-          console.log("uploadedImageData ", this.uploadedImageData)
-          alert("No Delete token")
+        if(this.uploadedImageData.deleteToken === ""){ // if delete token is not provided
+          console.log("uploadedImageData ", this.uploadedImageData);
+          alert("No Delete token");
         }
-        let formData = new FormData()
-        formData.append('token', this.uploadedImageData.deleteToken)
+        let formData = new FormData();
+        formData.append("token", this.uploadedImageData.deleteToken);
         axios.post(this.cloudinaryDeleteUrl, formData)
           .then(response => {
             if(this.cropperInstance){
-              this.cropperInstance.destroy()
+              this.cropperInstance.destroy();
             }
             this.destroyUploaderInstance()
-            this.showModal()
-            this.$emit('remoteImageDeleted')
+            this.showModal();
+            this.$emit("remoteImageDeleted");
           })
           .catch(error=>{
-            console.log(error)
-            return false
+            console.log(error);
+            return false;
           })
       }
     }
@@ -213,7 +214,7 @@
 </script>
 
 <style>
-  :root{
+  :root {
     --default-font-family: Arial, Helvetica, sans-serif;
     --default-font-weight-small: 300;
     --default-font-weight-medium: 600;
@@ -243,22 +244,22 @@
     font-family: var(--default-font-family);
   }
 
-  #vue-cloudinary-uploader{
+  #vue-cloudinary-uploader {
   }
 
-  .vcu-progress-wrapper{
+  .vcu-progress-wrapper {
     height: 30px;
     width: 100%;
     padding: 0;
   }
-  .vcu-progress{
+  .vcu-progress {
     margin: 0;
     height: inherit;
     background: var(--color-success)
   }
 
 /*button styles*/
-  .vcu-button{
+  .vcu-button {
     position: relative;
     background: var(--color-primary);
     border: none;
@@ -269,12 +270,13 @@
     margin-left: 5px;
     cursor: pointer;
   }
-  .vcu-button:disabled{
+  
+  .vcu-button:disabled {
     background: var(--color-primary) !important;
     color: black !important;
   }
 
-  .close-button{
+  .close-button {
     position: absolute;
     top: 0; right: 0;
     margin: var(--default-space-x-small);
@@ -283,42 +285,52 @@
     cursor: pointer;
     z-index: 5;
   }
-  .close-button:hover{
+  
+  .close-button:hover {
     background-color: var(--color-danger-light);
   }
-  .close-button:active{
+  
+  .close-button:active {
     background-color: var(--color-danger-dark);
   }
 
-  .button-success{
+  .button-success {
     background-color: var(--color-success);
   }
-  .button-success:hover{
+  
+  .button-success:hover {
     background-color: var(--color-success-light);
   }
-  .button-success:active{
+  
+  .button-success:active {
     background-color: var(--color-success-dark);
   }
-  .button-danger{
+  
+  .button-danger {
     background-color: var(--color-danger);
   }
-  .button-danger:hover{
+  
+  .button-danger:hover {
     background-color: var(--color-danger-light);
   }
-  .button-danger:active{
+  
+  .button-danger:active {
     background-color: var(--color-danger-dark);
   }
-  .button-info{
+  
+  .button-info {
     background-color: var(--color-info);
   }
-  .button-info:hover{
+  
+  .button-info:hover {
     background-color: var(--color-info-light);
   }
-  .button-info:active{
+  
+  .button-info:active {
     background-color: var(--color-info-dark);
   }
 
-  #modal-wrapper{
+  #modal-wrapper {
     position: fixed;
     top: 10px; bottom: 10px;
     left: 100px; right: 100px;
@@ -329,7 +341,7 @@
     box-shadow: 0 0 5px 0 #b1b0b0;
   }
 
-  .image-cropper{
+  .image-cropper {
     flex-grow: 1;
     /* padding: var(--default-space-small); */
     display: flex;
@@ -339,7 +351,7 @@
     max-width: inherit;
   }
 
-  .image-cropper > .editor{
+  .image-cropper > .editor {
     flex-grow: 1;
     display: flex;
     flex-direction: column;
@@ -349,26 +361,28 @@
     max-width: inherit;
     overflow: hidden;
   }
-  .image-cropper > .editor > .input{
+  
+  .image-cropper > .editor > .input {
     height: 50px;
     display: flex;
     flex-direction: row;
     align-items: flex-start;
   }
-  .image-cropper > .editor > .input{
+  
+  .image-cropper > .editor > .input {
     height: 50px;
     display: flex;
     flex-direction: row;
     justify-content: center;
   }
-  .image-cropper > .editor > div > .input > input, .image-cropper > .editor > .input > button{
+  
+  .image-cropper > .editor > div > .input > input, .image-cropper > .editor > .input > button {
     min-height: 20px;
     font-size: 16px;
     margin-left: var(--default-space-small);
   }
-
-
-  input[type="file"]{
+  
+  input[type="file"] {
     position: relative !important;
     top: 1% !important;
     z-index: 1 !important;
@@ -379,7 +393,7 @@
     cursor: pointer !important;
   }
 
-  .image-cropper > .editor > .img{
+  .image-cropper > .editor > .img {
     position: relative;
     max-height: -webkit-fill-available;
     padding: var(--default-space-small);
@@ -389,7 +403,7 @@
     margin-bottom: 20px;
   }
 
-  .image-cropper > .options{
+  .image-cropper > .options {
     display: flex;
     flex-direction: row;
     justify-items: center;
@@ -400,7 +414,7 @@
     border-top: 1px solid var(--color-primary);
   }
 
-  .image-cropper > .options > div{
+  .image-cropper > .options > div {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -410,14 +424,13 @@
     cursor: pointer;
     font-weight: var(--default-font-weight-small);
   }
-
-
-  @media screen and (orientation: portrait){
-    #modal-wrapper{
+  
+  @media screen and (orientation: portrait) {
+    #modal-wrapper {
       left: 20px; right: 20px;
     }
 
-    .image-cropper > .options{
+    .image-cropper > .options {
       height: 10vmin;
     }
   }
@@ -426,11 +439,12 @@
     max-width: 100%;
   }
 
-/*model styes*/
-  .show{
+  /*model styes*/
+  .show {
     display: flex !important
   }
-  .hide{
+  
+  .hide {
     display: none !important
   }
 </style>
