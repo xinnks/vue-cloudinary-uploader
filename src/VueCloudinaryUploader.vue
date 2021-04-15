@@ -57,7 +57,7 @@
           publicId: "",
           secureUrl: ""
         }
-      }
+      };
     },
     props: {
       CloudinaryCloudName: {
@@ -80,21 +80,21 @@
       },
     },
     mounted(){
-      this.cloudinaryUploadUrl = `https://api.cloudinary.com/v1_1/${this.CloudinaryCloudName}/upload`
-      this.cloudinaryDeleteUrl = `https://api.cloudinary.com/v1_1/${this.CloudinaryCloudName}/delete_by_token`
+      this.cloudinaryUploadUrl = `https://api.cloudinary.com/v1_1/${this.CloudinaryCloudName}/upload`;
+      this.cloudinaryDeleteUrl = `https://api.cloudinary.com/v1_1/${this.CloudinaryCloudName}/delete_by_token`;
     },
     methods: {
       showModal(){
-        this.modelVisible = true
+        this.modelVisible = true;
       },
       hideModal(){
-        this.modelVisible = false
+        this.modelVisible = false;
       },
       editImage(){
-        this.showImageCropper = true
+        this.showImageCropper = true;
         if(this.cropperInstance){
-          this.cropperInstance.destroy()
-          this.showImageCropper = false
+          this.cropperInstance.destroy();
+          this.showImageCropper = false;
         }
         this.$nextTick(() => {
           this.cropperInstance = new Cropper(this.$refs.working_image, {
@@ -106,7 +106,7 @@
               this.showImageCropper = true;
             }
           });
-        })
+        });
       },
       async addLocalImage(){
         if(this.$refs.photo.files.length < 1){
